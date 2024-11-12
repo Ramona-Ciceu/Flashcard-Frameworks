@@ -1,0 +1,57 @@
+-- CreateTable
+CREATE TABLE "Set" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "Flashcard" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "setId" INTEGER NOT NULL,
+    "question" TEXT NOT NULL,
+    "solution" TEXT NOT NULL,
+    CONSTRAINT "Flashcard_setId_fkey" FOREIGN KEY ("setId") REFERENCES "Set" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "User" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "username" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "email" TEXT NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "Collection" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "setId" INTEGER NOT NULL,
+    CONSTRAINT "Collection_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "Collection_setId_fkey" FOREIGN KEY ("setId") REFERENCES "Set" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Telemetry" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "timestamp" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "eventType" TEXT,
+    "userId" INTEGER NOT NULL,
+    "additionalInfo" TEXT,
+    CONSTRAINT "Telemetry_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Review" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "usersId" INTEGER NOT NULL,
+    "setsId" INTEGER NOT NULL,
+    "rating" INTEGER NOT NULL,
+    "comment" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "Review_usersId_fkey" FOREIGN KEY ("usersId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "Review_setsId_fkey" FOREIGN KEY ("setsId") REFERENCES "Set" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);

@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+model Set {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  flashcards  Flashcard[]
+  collections Collection[]
+  reviews     Review[]
+}
+
+model Flashcard {
+  id         Int      @id @default(autoincrement())
+  setId      Int
+  question   String
+  solution   String
+  set        Set      @relation(fields: [setId], references: [id])
+}
+
+model User {
+  id        Int         @id @default(autoincrement())
+  username  String
+  password  String
+  email     String
+  collections Collection[]
+  telemetry   Telemetry[]
+  reviews     Review[]
+}
+
+model Collection {
+  id      Int  @id @default(autoincrement())
+  name    String
+  userId  Int
+  setId   Int
+  user    User  @relation(fields: [userId], references: [id])
+  set     Set   @relation(fields: [setId], references: [id])
+}
+
+model Telemetry {
+  id            Int       @id @default(autoincrement())
+  timestamp     DateTime  @default(now())
+  eventType     String?
+  userId        Int
+  additionalInfo String?
+  user          User      @relation(fields: [userId], references: [id])
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  usersId   Int
+  setsId    Int
+  rating    Int      
+  comment   String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [usersId], references: [id])
+  set       Set      @relation(fields: [setsId], references: [id])
+}
